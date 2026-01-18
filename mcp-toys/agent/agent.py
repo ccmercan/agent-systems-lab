@@ -45,11 +45,12 @@ def reflect_and_retry(
 
 def decide_tool(tools: dict, user_request: str) -> dict:
     system_prompt = (
-        "You are an agent that selects tools.\n"
-        "You will be given available tools and a user request.\n"
-        "Choose the correct tool and arguments.\n"
-        "Output ONLY valid JSON with keys: tool, args."
-    )
+    "You are an agent that selects the correct tool.\n"
+    "You MUST choose exactly one tool from the list.\n"
+    "Use the tool description to decide.\n"
+    "Pay attention to verbs like add, subtract, multiply.\n"
+    "Output ONLY valid JSON with keys: tool, args."
+)
 
     user_prompt = (
         f"Available tools:\n{json.dumps(tools, indent=2)}\n\n"
@@ -63,7 +64,7 @@ def decide_tool(tools: dict, user_request: str) -> dict:
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
-        options={"temperature": 0.9},
+        options={"temperature": 0.0},
     )
 
     return json.loads(response.message.content)
@@ -119,7 +120,13 @@ def run_agent(user_request: str, max_retries: int = 2):
 
 
 if __name__ == "__main__":
-    output = run_agent("Add 7 and 12")
-    #output = run_agent("Can you do the math thing with those two numbers?")
+    tests = [
+        "Add 3 and 4",
+        "Subtract 10 from 3",
+        "Multiply 6 by 7",
+        "What is 8 times 5?",
+    ]
 
-    print("Agent result:", output)
+    for t in tests:
+        print("\nUser:", t)
+        print("Agent result:", run_agent(t))

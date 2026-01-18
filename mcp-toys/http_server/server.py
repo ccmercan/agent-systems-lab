@@ -1,4 +1,4 @@
-print(">>> LOADED MCP SERVER WITH AUTH <<<")
+
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
@@ -22,16 +22,28 @@ def require_api_key(x_api_key: Optional[str] = Header(default=None)):
 def add_numbers(a: int, b: int) -> int:
     return a + b
 
+def subtract_numbers(a: int, b: int) -> int:
+    return a - b
+
+def multiply_numbers(a: int, b: int) -> int:
+    return a * b
 
 TOOLS = {
     "add_numbers": {
         "description": "Add two integers",
-        "input_schema": {
-            "a": "int",
-            "b": "int",
-        },
+        "input_schema": {"a": "int", "b": "int"},
         "handler": add_numbers,
-    }
+    },
+    "subtract_numbers": {
+        "description": "Subtract b from a",
+        "input_schema": {"a": "int", "b": "int"},
+        "handler": subtract_numbers,
+    },
+    "multiply_numbers": {
+        "description": "Multiply two integers",
+        "input_schema": {"a": "int", "b": "int"},
+        "handler": multiply_numbers,
+    },
 }
 
 # ------------------
